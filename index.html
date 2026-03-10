@@ -688,8 +688,38 @@
                     <button onClick={()=>deleteEvent(ev.id)} style={{flex:1,background:"rgba(192,40,26,0.1)",border:"1px solid rgba(192,40,26,0.4)",borderRadius:6,padding:"7px",color:"#c0281a",fontWeight:700,fontSize:11,cursor:"pointer"}}>🗑️ DELETE</button>
                   </div>
                 </div>
-              ))}
-              <button onClick={()=>onCreateEvent()} style={{width:"100%",background:"linear-gradient(135deg,#1a8a3a,#0d5a28)",border:"none",borderRadius:8,padding:"12px",color:"#fff",fontFamily:"Impact,sans-serif",fontSize:16,letterSpacing:2,cursor:"pointer",marginTop:8}}>+ CREATE NEW EVENT</button>
+              {/* This replaces the old CREATE NEW EVENT button */}
+              <button 
+                onClick={async () => {
+                  const title = prompt("Event Name:");
+                  const loc = prompt("Location (e.g. Plymouth Hoe):");
+                  const date = prompt("Date/Time (YYYY-MM-DD):", new Date().toISOString().split('T')[0]);
+                  
+                  if (!title || !loc || !date) {
+                    alert("All fields are required to post an event.");
+                    return;
+                  }
+
+                  const { error } = await supabase.from('events').insert([{
+                    user_id: session.user.id,
+                    title: title,
+                    location: loc,
+                    event_date: date,
+                    status: 'active'
+                  }]);
+
+                  if (error) {
+                    alert("Database Error: " + error.message);
+                  } else {
+                    alert("✅ Event successfully created!");
+                    // This reloads the page to show the new event
+                    window.location.reload(); 
+                  }
+                }} 
+                style={{width:"100%",background:"linear-gradient(135deg,#1a8a3a,#0d5a28)",border:"none",borderRadius:8,padding:"12px",color:"#fff",fontFamily:"Impact,sans-serif",fontSize:16,letterSpacing:2,cursor:"pointer",marginTop:8}}
+              >
+                + CREATE NEW EVENT
+              </button>
             </div>}
 
             {view==="members"&&<div>
