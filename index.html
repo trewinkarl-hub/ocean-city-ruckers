@@ -721,7 +721,8 @@
             >
               + CREATE NEW EVENT
             </button>
-
+           </div>}
+            
             {view==="members"&&<div>
               <div style={{fontFamily:"Impact,sans-serif",fontSize:20,color:C.orange,letterSpacing:3,marginBottom:16}}>MEMBERS ({members.length})</div>
               {loadingM?<Spinner/>:members.map(m=>(
