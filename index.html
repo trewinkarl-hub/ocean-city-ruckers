@@ -679,48 +679,48 @@
               </div>}
               {/* Active events */}
               <div style={{fontWeight:700,fontSize:11,color:C.wave,letterSpacing:2,marginBottom:8}}>ACTIVE EVENTS</div>
-              {(!activeEvents||activeEvents.length===0)?<div style={{color:C.dim,fontSize:12,marginBottom:12}}>No active events</div>:activeEvents.map(ev=>(
+            {(!activeEvents || activeEvents.length === 0) ? (
+              <div style={{color:C.dim,fontSize:12,marginBottom:12}}>No active events</div>
+            ) : (
+              activeEvents.map(ev => (
                 <div key={ev.id} style={{background:C.bg,border:`1px solid ${C.border}`,borderRadius:8,padding:"10px 12px",marginBottom:8}}>
-                  <div style={{fontWeight:700,fontSize:13,color:"#f0eff0"}}>{ev.badge} {ev.title}</div>
-                  <div style={{fontSize:11,color:"#7a9bbf",marginBottom:6}}>{ev.date} {ev.time} {ev.location&&`· 📍 ${ev.location}`}</div>
+                  <div style={{fontWeight:700,fontSize:13,color:"#f0eff0"}}>{ev.title}</div>
+                  <div style={{fontSize:11,color:"#7a9bbf",marginBottom:6}}>{ev.event_date} · 📍 {ev.location}</div>
                   <div style={{display:"flex",gap:6}}>
-                    <button onClick={()=>markEventDone(ev.id)} style={{flex:1,background:C.card,border:`1px solid ${C.border}`,borderRadius:6,padding:"7px",color:C.muted,fontWeight:700,fontSize:11,cursor:"pointer"}}>✅ MARK DONE</button>
-                    <button onClick={()=>deleteEvent(ev.id)} style={{flex:1,background:"rgba(192,40,26,0.1)",border:"1px solid rgba(192,40,26,0.4)",borderRadius:6,padding:"7px",color:"#c0281a",fontWeight:700,fontSize:11,cursor:"pointer"}}>🗑️ DELETE</button>
+                    <button onClick={() => markEventDone(ev.id)} style={{flex:1,background:C.card,border:`1px solid ${C.border}`,borderRadius:6,padding:"7px",color:C.muted,fontWeight:700,fontSize:11,cursor:"pointer"}}>✅ DONE</button>
+                    <button onClick={() => deleteEvent(ev.id)} style={{flex:1,background:"rgba(192,40,26,0.1)",border:"1px solid rgba(192,40,26,0.4)",borderRadius:6,padding:"7px",color:"#c0281a",fontWeight:700,fontSize:11,cursor:"pointer"}}>🗑️ DELETE</button>
                   </div>
                 </div>
-              {/* This replaces the old CREATE NEW EVENT button */}
-              <button 
-                onClick={async () => {
-                  const title = prompt("Event Name:");
-                  const loc = prompt("Location (e.g. Plymouth Hoe):");
-                  const date = prompt("Date/Time (YYYY-MM-DD):", new Date().toISOString().split('T')[0]);
-                  
-                  if (!title || !loc || !date) {
-                    alert("All fields are required to post an event.");
-                    return;
-                  }
+              ))
+            )}
+            
+            <button 
+              onClick={async () => {
+                const title = prompt("Event Name:");
+                const loc = prompt("Location:");
+                const date = prompt("Date (YYYY-MM-DD):", new Date().toISOString().split('T')[0]);
+                
+                if (!title || !loc || !date) return;
 
-                  const { error } = await supabase.from('events').insert([{
-                    user_id: session.user.id,
-                    title: title,
-                    location: loc,
-                    event_date: date,
-                    status: 'active'
-                  }]);
+                const { error } = await supabase.from('events').insert([{
+                  user_id: session.user.id,
+                  title: title,
+                  location: loc,
+                  event_date: date,
+                  status: 'active'
+                }]);
 
-                  if (error) {
-                    alert("Database Error: " + error.message);
-                  } else {
-                    alert("✅ Event successfully created!");
-                    // This reloads the page to show the new event
-                    window.location.reload(); 
-                  }
-                }} 
-                style={{width:"100%",background:"linear-gradient(135deg,#1a8a3a,#0d5a28)",border:"none",borderRadius:8,padding:"12px",color:"#fff",fontFamily:"Impact,sans-serif",fontSize:16,letterSpacing:2,cursor:"pointer",marginTop:8}}
-              >
-                + CREATE NEW EVENT
-              </button>
-            </div>}
+                if (error) {
+                  alert("Error: " + error.message);
+                } else {
+                  alert("✅ Event Created!");
+                  window.location.reload();
+                }
+              }} 
+              style={{width:"100%",background:"linear-gradient(135deg,#1a8a3a,#0d5a28)",border:"none",borderRadius:8,padding:"12px",color:"#fff",fontFamily:"Impact,sans-serif",fontSize:16,letterSpacing:2,cursor:"pointer",marginTop:8}}
+            >
+              + CREATE NEW EVENT
+            </button>
 
             {view==="members"&&<div>
               <div style={{fontFamily:"Impact,sans-serif",fontSize:20,color:C.orange,letterSpacing:3,marginBottom:16}}>MEMBERS ({members.length})</div>
